@@ -14,12 +14,17 @@ const EventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
+    startTime: {
+      type: String,
+      required: true,
+    },
+    endTime: {
       type: String,
       required: true,
     },
     venue: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "venue",
       required: true,
     },
     capacity: {
@@ -28,12 +33,12 @@ const EventSchema = new mongoose.Schema(
       min: 0,
     },
     organizer: {
-      type: String,
+      type: mongoose.Schema.ObjectId.ObjectId,
+      ref: "user",
       required: true,
     },
     tags: {
       type: [String],
-      required: true,
     },
   },
   { timestamps: true }
