@@ -1,5 +1,17 @@
 const mongoose = require("mongoose");
 
+const AttendanceSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+  isPresent: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const EventSchema = new mongoose.Schema(
   {
     title: {
@@ -40,6 +52,7 @@ const EventSchema = new mongoose.Schema(
     tags: {
       type: [String],
     },
+    attendance: [AttendanceSchema],
   },
   { timestamps: true }
 );
