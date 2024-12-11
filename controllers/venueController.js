@@ -46,6 +46,16 @@ module.exports.getVenue = async (req, res) => {
   }
 };
 
+module.exports.getAllVenue = async (req, res) => {
+  try {
+    const venues = await Venue.find().select("-events");
+    res.status(200).json({ message: "Fetched data", venues });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
+
 module.exports.updateVenue = async (req, res) => {
   try {
     const { name, location, maxCapacity } = req.body;
