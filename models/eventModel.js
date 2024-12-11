@@ -1,11 +1,35 @@
 const mongoose = require("mongoose");
 
+const UserDescSchema = new mongoose.Schema({
+  studentId: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  year: {
+    type: Number,
+    required: true,
+  },
+});
+
 const AttendanceSchema = new mongoose.Schema({
   id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: true,
   },
+  description: UserDescSchema,
   isPresent: {
     type: Boolean,
     default: false,
