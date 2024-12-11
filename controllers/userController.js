@@ -78,3 +78,27 @@ module.exports.updateUser = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.updateControl = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { email, newControl } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user || user.control !== "admin") {
+      return res.status(403).json({ message: "No access" });
+    }
+
+    const secondUser = await User.findOne({ email });
+    if (!secondUser) {
+      return res.status(400).json({ message: "Cannot find the user" });
+    }
+
+    secondUser.control = newControl || secondUser.control;
+    await secondUser.save();
+    res.status(200).json({ message: "User control updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
