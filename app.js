@@ -3,6 +3,7 @@ const { connectDb } = require("./config/db");
 require("dotenv").config();
 
 const userRoute = require("./routes/user");
+const venueRoute = require("./routes/venue");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -10,6 +11,7 @@ const PORT = process.env.PORT;
 app.use(express.json());
 
 app.use("/api/user", userRoute);
+app.use("/api/venue", venueRoute);
 
 connectDb();
 app.listen(PORT, () => {
