@@ -96,6 +96,20 @@ module.exports.getEvent = async (req, res) => {
   }
 };
 
+module.exports.getAllEvents = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user || user.control === "user") {
+      return res.status(400).json({ message: "No access" });
+    }
+
+    const events = await Event.find().select("-attendance");
+    res.status(200).json({ message: "Fetched events", events });
+  } catch (error) {}
+};
+
 module.exports.updateEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
