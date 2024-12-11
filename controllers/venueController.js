@@ -83,3 +83,22 @@ module.exports.updateVenue = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.deleteVenue = async (req, res) => {
+  try {
+    const { venueId } = req.params;
+    const userId = req.user._id;
+    console.log(userId)
+
+    const user = await User.findById(userId);
+    if (!user || (user.control !== "manager" && user.control !== "admin")) {
+      return res.status(400).json({ message: "No access" });
+    }
+
+    await Venue.findByIdAndDelete(venueId);
+    res.status(200).json({ message: "Venue deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
