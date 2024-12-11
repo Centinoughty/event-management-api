@@ -58,3 +58,23 @@ module.exports.loginUser = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.updateUser = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: "Cannot find user" });
+    }
+
+    user.name = name || user.name;
+    await user.save();
+
+    res.status(200).json({ message: "Updated user success" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
