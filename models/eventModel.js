@@ -45,7 +45,7 @@ const EventSchema = new mongoose.Schema(
       min: 0,
     },
     organizer: {
-      type: mongoose.Schema.ObjectId.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: true,
     },
@@ -53,6 +53,10 @@ const EventSchema = new mongoose.Schema(
       type: [String],
     },
     attendance: [AttendanceSchema],
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

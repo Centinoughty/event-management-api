@@ -82,7 +82,7 @@ module.exports.updateUser = async (req, res) => {
 module.exports.updateControl = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { email, newControl } = req.body;
+    const { email, newControl, id } = req.body;
 
     const user = await User.findById(userId);
     if (!user || user.control !== "admin") {
@@ -95,6 +95,7 @@ module.exports.updateControl = async (req, res) => {
     }
 
     secondUser.control = newControl || secondUser.control;
+    secondUser.userId = id || secondUser.userId;
     await secondUser.save();
     res.status(200).json({ message: "User control updated" });
   } catch (error) {
