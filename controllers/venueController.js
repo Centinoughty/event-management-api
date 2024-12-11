@@ -8,7 +8,7 @@ module.exports.createVenue = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user || (user.control !== "manager" && user.control !== "admin")) {
-      return res.status(400).json({ message: "No access" });
+      return res.status(401).json({ message: "No access" });
     }
 
     const existingVenue = await Venue.findOne({ name });
@@ -26,6 +26,34 @@ module.exports.createVenue = async (req, res) => {
     res.status(201).json({ message: "Created venue" });
   } catch (error) {
     res.status(500).json({ message: "Internl Server Error" });
+    console.log(error);
+  }
+};
+
+module.exports.updateVenue = async (req, res) => {
+  try {
+    const { name, location, maxCapacity } = req.body;
+    const userId = req.user._id;
+    const { venueId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user || (user.control !== "manager" && user.control !== "admin")) {
+      return res.status(401).json({ message: "No access" });
+    }
+
+    const venue = await Venue.findById(venueId);
+    if (!venue) {
+      return res.status(400).json({ message: "Cannot find user" });
+    }
+
+    venue.name = name || venue.name;
+    venue.location = location || venue.location;
+    venue.capacity = maxCapacity || venue.capacity;
+
+    await venue.save();
+    res.status(200).json({ message: "Venue updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
     console.log(error);
   }
 };
