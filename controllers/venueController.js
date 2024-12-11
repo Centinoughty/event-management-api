@@ -30,6 +30,22 @@ module.exports.createVenue = async (req, res) => {
   }
 };
 
+module.exports.getVenue = async (req, res) => {
+  try {
+    const { venueId } = req.params;
+
+    const venue = await Venue.findById(venueId).select("-events");
+    if (!venue) {
+      return res.status(400).json({ message: "Cannot find venue" });
+    }
+
+    return res.status(200).json({ message: "Fetched data", venue });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
+
 module.exports.updateVenue = async (req, res) => {
   try {
     const { name, location, maxCapacity } = req.body;
