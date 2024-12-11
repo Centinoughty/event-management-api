@@ -94,7 +94,11 @@ module.exports.deleteVenue = async (req, res) => {
       return res.status(400).json({ message: "No access" });
     }
 
-    await Venue.findByIdAndDelete(venueId);
+    const venue = await Venue.findByIdAndDelete(venueId);
+    if (!venue) {
+      return res.status(400).json({ message: "Cannot find venue" });
+    }
+
     res.status(200).json({ message: "Venue deleted" });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

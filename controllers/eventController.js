@@ -114,3 +114,25 @@ module.exports.updateEvent = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.deleteEvent = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { eventId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user || user.control === "user") {
+      return res.status(400).json({ message: "No access" });
+    }
+
+    const event = await Event.findByIdAndDelete(eventId);
+    if (!event) {
+      return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    res.status(200).json({ message: "Event deleted success" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
