@@ -34,18 +34,26 @@ module.exports.createEvent = async (req, res) => {
       return res.status(400).json({ message: "Cannot find the organizer" });
     }
 
-    startTime = time;
-    if (!endTime) {
-      const [startHour, startMinute] = startTime.split(":").map(Number);
-      let endHour = startHour + 1;
-      let endMinute = startMinute;
-      if (endHour >= 24) {
-        endHour -= 24;
-      }
+    if (time) {
+      startTime = time;
+      if (!endTime) {
+        const [startHour, startMinute] = startTime.split(":").map(Number);
+        let endHour = startHour + 1;
+        let endMinute = startMinute;
+        if (endHour >= 24) {
+          endHour -= 24;
+        }
 
-      endTime = `${String(endHour).padStart(2, "0")}:${String(
-        endMinute
-      ).padStart(2, "0")}`;
+        endTime = `${String(endHour).padStart(2, "0")}:${String(
+          endMinute
+        ).padStart(2, "0")}`;
+      }
+    }
+
+    if (startTime >= endTime) {
+      return res
+        .status(400)
+        .json({ message: "Start time must be less than end time" });
     }
 
     if (!isVenueAvailable(existingVenue._id, date, startTime, endTime)) {
@@ -66,6 +74,41 @@ module.exports.createEvent = async (req, res) => {
 
     await newEvent.save();
     res.status(201).json({ message: "Created event" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
+
+module.exports.updateEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user._id;
+    let {
+      title,
+      description,
+      date,
+      startTime,
+      endTime,
+      newCapacity,
+      newVenue,
+    } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user || user.control === "user") {
+      return res.status(400).json({ message: "Cannot find user" });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    event.title = title || event.title;
+    event.description = description || event.description;
+
+    await event.save();
+    res.status(200).json({ message: "Event updated" });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
     console.log(error);
