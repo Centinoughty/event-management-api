@@ -80,6 +80,22 @@ module.exports.createEvent = async (req, res) => {
   }
 };
 
+module.exports.getEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await Event.findById(eventId).select("-attendance");
+    if (!event) {
+      return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    res.status(200).json({ message: "Event fetched succes", event });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
+
 module.exports.updateEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
