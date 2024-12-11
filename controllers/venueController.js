@@ -88,7 +88,6 @@ module.exports.deleteVenue = async (req, res) => {
   try {
     const { venueId } = req.params;
     const userId = req.user._id;
-    console.log(userId)
 
     const user = await User.findById(userId);
     if (!user || (user.control !== "manager" && user.control !== "admin")) {
