@@ -3,6 +3,7 @@ const Event = require("../models/eventModel");
 const formatDate = require("../util/formatDate");
 const formatTime = require("../util/formatTime");
 const inTimeRange = require("../util/inTimeRange");
+const generateShortCode = require("../util/generateShortCode");
 
 module.exports.registerEvent = async (req, res) => {
   try {
@@ -38,6 +39,38 @@ module.exports.registerEvent = async (req, res) => {
 
     await event.save();
     res.status(200).json({ message: "User registered fo event" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
+
+module.exports.generateCode = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { eventId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user || user.control === "user") {
+      return res.status(400).json({ message: "No access" });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    if (event.attendanceCode) {
+      return res
+        .status(200)
+        .json({ message: "Fetched code", code: event.attendanceCode });
+    }
+
+    const code = generateShortCode();
+    event.attendanceCode = code;
+    await event.save();
+
+    res.status(201).json({ message: "Code created", code });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
     console.log(error);
