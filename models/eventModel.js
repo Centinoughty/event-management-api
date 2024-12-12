@@ -77,6 +77,9 @@ const EventSchema = new mongoose.Schema(
       type: [String],
     },
     attendance: [AttendanceSchema],
+    attendanceCode: {
+      type: String,
+    },
     isCompleted: {
       type: Boolean,
       default: false,
