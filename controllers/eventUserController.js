@@ -206,7 +206,7 @@ module.exports.markAttendance = async (req, res) => {
   }
 };
 
-module.exports.getAttendance = async (req, res) => {
+module.exports.getAttendees = async (req, res) => {
   try {
     const userId = req.user._id;
     const { eventId } = req.params;
