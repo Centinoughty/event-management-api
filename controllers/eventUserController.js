@@ -4,6 +4,7 @@ const formatDate = require("../util/formatDate");
 const formatTime = require("../util/formatTime");
 const inTimeRange = require("../util/inTimeRange");
 const generateShortCode = require("../util/generateShortCode");
+const compareDate = require("../util/compareDate");
 
 module.exports.registerEvent = async (req, res) => {
   try {
@@ -32,10 +33,26 @@ module.exports.registerEvent = async (req, res) => {
       return res.status(409).json({ message: "User already registered" });
     }
 
-    event.attendance.push({
-      id: user._id,
-      description: { studentId, name, email, department, year },
-    });
+    const today = formatDate(new Date());
+    const currentTime = formatTime(new Date());
+    const statusOfEventDate = compareDate(today, event.date);
+    const statusOfEvent = inTimeRange(
+      currentTime,
+      event.startTime,
+      event.endTime
+    );
+
+    if (
+      statusOfEventDate === -1 ||
+      (statusOfEventDate === 0 && statusOfEvent === -1)
+    ) {
+      event.attendance.push({
+        id: user._id,
+        description: { studentId, name, email, department, year },
+      });
+    } else {
+      return res.status(400).json({ message: "Cannot register for event" });
+    }
 
     await event.save();
     res.status(200).json({ message: "User registered fo event" });
@@ -64,6 +81,32 @@ module.exports.generateCode = async (req, res) => {
       return res
         .status(200)
         .json({ message: "Fetched code", code: event.attendanceCode });
+    }
+
+    const today = formatDate(new Date());
+    const currentTime = formatTime(new Date());
+
+    const statusOfEvent = inTimeRange(
+      currentTime,
+      event.startTime,
+      event.endTime
+    );
+    const statusOfEventDate = compareDate(today, event.date);
+
+    if (statusOfEventDate === -1) {
+      return res
+        .status(400)
+        .json({ message: "Code can be generated once event starts" });
+    } else if (statusOfEventDate === 1) {
+      return res.status(400).json({ message: "Event ended" });
+    } else {
+      if (statusOfEvent === -1) {
+        return res
+          .status(400)
+          .json({ message: "Code can be generated once event starts" });
+      } else if (statusOfEvent === 1) {
+        return res.status(400).json({ message: "Event ended" });
+      }
     }
 
     const code = generateShortCode();
@@ -147,19 +190,13 @@ module.exports.markAttendance = async (req, res) => {
         }
       }
     } else {
-      const [eventDay, eventMonth, eventYear] = event.date
-        .split(" ")
-        .map(Number);
-      const [todayDay, todayMonth, todayYear] = today.split(" ").map(Number);
+      const statusOfEventDate = compareDate(today, event.date);
 
-      const eventDate = new Date(eventYear, eventMonth - 1, eventDay);
-      const todayDate = new Date(todayYear, todayMonth - 1, todayDay);
-
-      if (eventDate < todayDate) {
+      if (statusOfEventDate === 1) {
         return res
           .status(400)
           .json({ message: "The event has already occured" });
-      } else if (eventDate > todayDate) {
+      } else if (statusOfEventDate === -1) {
         return res.status(400).json({ message: "The event has not started" });
       }
     }
