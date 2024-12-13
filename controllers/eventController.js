@@ -60,6 +60,12 @@ module.exports.createEvent = async (req, res) => {
       return res.status(400).json({ message: "Venue already booked" });
     }
 
+    if (existingVenue.capacity > capacity) {
+      return res
+        .status(400)
+        .json({ message: `The maximum capacity is ${existingVenue.capacity}` });
+    }
+
     const newEvent = new Event({
       title,
       description,
@@ -134,8 +140,36 @@ module.exports.updateEvent = async (req, res) => {
       return res.status(400).json({ message: "Cannot find event" });
     }
 
+    const venue = await Venue.findById(event.venue);
+
     event.title = title || event.title;
     event.description = description || event.description;
+
+    date = date || event.date;
+    startTime = startTime || event.startTime;
+    endTime = endTime || event.endTime;
+    newCapacity = newCapacity || event.capacity;
+    newVenue = newVenue || venue.name;
+
+    const existingVenue = await Venue.findOne({ name: newVenue });
+
+    const isAvailable = isVenueAvailable(
+      existingVenue._id,
+      date,
+      startTime,
+      endTime,
+      venue._id
+    );
+
+    if (!isAvailable) {
+      return res.status(400).json({ message: "Venue not available" });
+    }
+
+    if (existingVenue.capacity < newCapacity) {
+      return res
+        .status(400)
+        .json({ message: `The maximum capacity is ${existingVenue.capacity}` });
+    }
 
     await event.save();
     res.status(200).json({ message: "Event updated" });
