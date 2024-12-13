@@ -205,3 +205,32 @@ module.exports.markAttendance = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.getAttendance = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { eventId } = req.params;
+
+    const user = await User.findById(userId);
+    if (
+      !user ||
+      user.control === "user" ||
+      (user.control === "organizer" &&
+        user._id.toString() !== userId.toString())
+    ) {
+      return rs.status(400).json({ message: "No access" });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    const attendance = event.attendance;
+
+    res.status(200).json({ message: "Fetched attendance", attendance });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
+  }
+};
