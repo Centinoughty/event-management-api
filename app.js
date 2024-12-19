@@ -6,6 +6,7 @@ const userRoute = require("./routes/user");
 const venueRoute = require("./routes/venue");
 const eventRoute = require("./routes/event");
 const attendanceRoute = require("./routes/attendance");
+const feedbackRoute = require("./routes/feedback");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -16,6 +17,7 @@ app.use("/api/user", userRoute);
 app.use("/api/venue", venueRoute);
 app.use("/api/event", eventRoute);
 app.use("/api/attendance", attendanceRoute);
+app.use("/api/feedback", feedbackRoute);
 
 connectDb();
 app.listen(PORT, () => {

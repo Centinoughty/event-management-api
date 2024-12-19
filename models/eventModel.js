@@ -34,6 +34,9 @@ const AttendanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  feedback: {
+    type: String,
+  },
 });
 
 const EventSchema = new mongoose.Schema(
