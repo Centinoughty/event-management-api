@@ -56,11 +56,11 @@ module.exports.createEvent = async (req, res) => {
         .json({ message: "Start time must be less than end time" });
     }
 
-    if (!isVenueAvailable(existingVenue._id, date, startTime, endTime)) {
+    if (!(await isVenueAvailable(existingVenue._id, date, startTime, endTime))) {
       return res.status(400).json({ message: "Venue already booked" });
     }
 
-    if (existingVenue.capacity > capacity) {
+    if (existingVenue.capacity < capacity) {
       return res
         .status(400)
         .json({ message: `The maximum capacity is ${existingVenue.capacity}` });
@@ -153,7 +153,7 @@ module.exports.updateEvent = async (req, res) => {
 
     const existingVenue = await Venue.findOne({ name: newVenue });
 
-    const isAvailable = isVenueAvailable(
+    const isAvailable = await isVenueAvailable(
       existingVenue._id,
       date,
       startTime,

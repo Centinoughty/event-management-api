@@ -24,7 +24,7 @@ module.exports = async (
     ) {
       return false;
     }
-
-    return true;
   }
+
+  return true;
 };
