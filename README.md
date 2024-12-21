@@ -79,7 +79,7 @@ An event management API built with Express.js and MongoDB. This API allows you t
    cd event-management-api
   ```
 
-2. Install the dependencies
+2. Install the dependencies:
 
   ```bash
   npm install
