@@ -90,6 +90,7 @@ An event management API built with Express.js and MongoDB. This API allows you t
 
   ```bash
   npm start
+  ```
 
 ## Contributing
 
