@@ -1,6 +1,7 @@
 const express = require("express");
 const { connectDb } = require("./config/db");
 require("dotenv").config();
+require("./tasks/cronTask");
 
 const userRoute = require("./routes/user");
 const venueRoute = require("./routes/venue");
