@@ -81,8 +81,10 @@ An event management API built with Express.js and MongoDB. This API allows you t
 
 2. Install the dependencies:
 
-   ```bash
+   ```
+   bash
    npm install
+   
    ```
 
 3. Create a `.env` file and set the required environment variables (e.g., `MONGO_URI`, `JWT_SECRET`, etc.).
