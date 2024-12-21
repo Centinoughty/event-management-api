@@ -6,6 +6,8 @@ const inTimeRange = require("../util/inTimeRange");
 const generateShortCode = require("../util/generateShortCode");
 const compareDate = require("../util/compareDate");
 
+const ATTENDANCE_LENGTH = process.env.ATTENDANCE_LENGTH;
+
 module.exports.registerEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -109,7 +111,7 @@ module.exports.generateCode = async (req, res) => {
       }
     }
 
-    const code = generateShortCode();
+    const code = generateShortCode(Number(ATTENDANCE_LENGTH));
     event.attendanceCode = code;
     await event.save();
 
@@ -212,18 +214,21 @@ module.exports.getAttendees = async (req, res) => {
     const { eventId } = req.params;
 
     const user = await User.findById(userId);
-    if (
-      !user ||
-      user.control === "user" ||
-      (user.control === "organizer" &&
-        user._id.toString() !== userId.toString())
-    ) {
+    if (!user || user.control === "user") {
       return rs.status(400).json({ message: "No access" });
     }
 
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(400).json({ message: "Cannot find event" });
+    }
+
+    const organizer = await User.findById(event.organizer);
+    if (
+      user.control === "organizer" &&
+      organizer.userId.toString() !== user.userId.toString()
+    ) {
+      return res.status(400).json({ message: "No access" });
     }
 
     const attendance = event.attendance;

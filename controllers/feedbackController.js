@@ -18,7 +18,7 @@ module.exports.writeFeedback = async (req, res) => {
     }
 
     const registeredUser = event.attendance.find(
-      (attendee) => attendee._id.toString() === userId.toString()
+      (attendee) => attendee.id.toString() === userId.toString()
     );
 
     if (!registeredUser) {
@@ -62,7 +62,7 @@ module.exports.getFeedback = async (req, res) => {
     }
 
     const registeredUser = event.attendance.find(
-      (attendee) => attendee._id.toString() === userId.toString()
+      (attendee) => attendee.id.toString() === userId.toString()
     );
 
     if (!registeredUser) {
@@ -85,12 +85,6 @@ module.exports.getFeedback = async (req, res) => {
 module.exports.getAllFeedback = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const userId = req.user._id;
-
-    const user = await User.findById(userId);
-    if (!user || user.control === "user") {
-      return res.status(401).json({ message: "No access" });
-    }
 
     const event = await Event.findById(eventId);
     if (!event) {
