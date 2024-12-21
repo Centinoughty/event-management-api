@@ -56,7 +56,6 @@ An event management API built with Express.js and MongoDB. This API allows you t
 - `GET /api/feedback/get-feedback/:id`: User can get the feedback for the event.
 - `GET /api/feedback/get-all-attendance/:id`: Get all the feedback given by the particpants for the event.
 
-
 ### Middleware
 
 - **LogAccess Middleware**: Logs all the requests to the server
@@ -77,23 +76,23 @@ An event management API built with Express.js and MongoDB. This API allows you t
    ```bash
    git clone https://github.com/Centinoughty/event-management-api.git
    cd event-management-api
-  ```
+   ```
+
+````
 
 2. Install the dependencies:
 
-   ```
-   bash
-   npm install
-   
-   ```
+```bash
+npm install
+````
 
 3. Create a `.env` file and set the required environment variables (e.g., `MONGO_URI`, `JWT_SECRET`, etc.).
 
 4. Start the server
 
-   ```bash
-   npm start
-   ```
+```bash
+npm start
+```
 
 ## Contributing
 
@@ -104,7 +103,6 @@ An event management API built with Express.js and MongoDB. This API allows you t
 3. Commit your changes and push
 
 4. Create a new pull request
-
 
 ## License
 
