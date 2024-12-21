@@ -55,7 +55,7 @@ module.exports.registerEvent = async (req, res) => {
     }
 
     await event.save();
-    res.status(200).json({ message: "User registered fo event" });
+    res.status(200).json({ message: "User registered for event" });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
     console.log(error);
