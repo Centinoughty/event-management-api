@@ -56,7 +56,9 @@ module.exports.createEvent = async (req, res) => {
         .json({ message: "Start time must be less than end time" });
     }
 
-    if (!(await isVenueAvailable(existingVenue._id, date, startTime, endTime))) {
+    if (
+      !(await isVenueAvailable(existingVenue._id, date, startTime, endTime))
+    ) {
       return res.status(400).json({ message: "Venue already booked" });
     }
 
@@ -171,6 +173,7 @@ module.exports.updateEvent = async (req, res) => {
         .json({ message: `The maximum capacity is ${existingVenue.capacity}` });
     }
 
+    event.capacity = newCapacity;
     await event.save();
     res.status(200).json({ message: "Event updated" });
   } catch (error) {
